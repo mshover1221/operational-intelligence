@@ -1,0 +1,27 @@
+from src.reconciliation.claim import Claim
+from src.reconciliation.entity import Entity
+from src.reconciliation.evidence import Evidence
+
+
+def test_claim_stores_context():
+    entity = Entity("work_order", "9821")
+
+    evidence = Evidence(
+        source="customer_email",
+        source_id="email-123",
+        recorded_at="2026-09-28 10:33",
+        author="customer",
+        content="Can we move the appointment to Wednesday?",
+    )
+
+    claim = Claim(
+        entity=entity,
+        attribute="date",
+        value="Wednesday",
+        evidence=evidence,
+    )
+
+    assert claim.entity == entity
+    assert claim.attribute == "date"
+    assert claim.value == "Wednesday"
+    assert claim.evidence == evidence
