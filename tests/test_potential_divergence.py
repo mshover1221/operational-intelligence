@@ -15,12 +15,21 @@ def test_potential_divergence_stores_context():
         content="I can't make Monday. Can we move it to Wednesday?",
     )
 
+    finding = {
+        "type": "contradiction",
+        "key": "date",
+        "recorded_value": "Monday",
+        "evidence_value": "Wednesday",
+    }
+
     divergence = PotentialDivergence(
         entity=entity,
         recorded_state=recorded_state,
         evidence=[evidence],
+        findings=[finding],
     )
 
     assert divergence.entity == entity
     assert divergence.recorded_state == recorded_state
     assert divergence.evidence == [evidence]
+    assert divergence.findings == [finding]
