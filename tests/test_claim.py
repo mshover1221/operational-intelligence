@@ -25,3 +25,46 @@ def test_claim_stores_context():
     assert claim.attribute == "date"
     assert claim.value == "Wednesday"
     assert claim.evidence == evidence
+
+
+def test_claim_defaults_to_assertion():
+    entity = Entity("work_order", "9821")
+
+    evidence = Evidence(
+        source="customer_email",
+        source_id="email-123",
+        recorded_at="2026-09-28 10:33",
+        author="customer",
+        content="The appointment is Wednesday.",
+    )
+
+    claim = Claim(
+        entity=entity,
+        attribute="date",
+        value="Wednesday",
+        evidence=evidence,
+    )
+
+    assert claim.claim_type == "assertion"
+
+
+def test_claim_can_be_a_request():
+    entity = Entity("work_order", "9821")
+
+    evidence = Evidence(
+        source="customer_email",
+        source_id="email-123",
+        recorded_at="2026-09-28 10:33",
+        author="customer",
+        content="Can we move the appointment to Wednesday?",
+    )
+
+    claim = Claim(
+        entity=entity,
+        attribute="date",
+        value="Wednesday",
+        evidence=evidence,
+        claim_type="request",
+    )
+
+    assert claim.claim_type == "request"
