@@ -3,5 +3,8 @@ class Claim:
         self.entity = entity
         self.attribute = attribute
         self.value = value
-        self.evidence = evidence
+        if isinstance(evidence, list):
+            self.evidence = evidence
+        else:
+            self.evidence = [evidence]
         self.claim_type = claim_type

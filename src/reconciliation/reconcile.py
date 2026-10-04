@@ -33,7 +33,11 @@ def reconcile(entity, recorded_state, claims):
         return PotentialDivergence(
             entity=entity,
             recorded_state=recorded_state,
-            evidence=[claim.evidence for claim in claims],
+            evidence=[
+                evidence
+                for claim in claims
+                for evidence in claim.evidence
+            ],
             findings=findings,
         )
 
