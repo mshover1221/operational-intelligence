@@ -14,6 +14,13 @@ def reconcile(entity, recorded_state, claims):
                 "key": claim.attribute,
                 "evidence_value": claim.value,
             })
+        elif claim.claim_type == "request" and claim.value != recorded_state.fields[claim.attribute]:
+            findings.append({
+                "type": "unresolved_request",
+                "key": claim.attribute,
+                "recorded_value": recorded_state.fields[claim.attribute],
+                "requested_value": claim.value,
+            })
         elif claim.value != recorded_state.fields[claim.attribute]:
             findings.append({
                 "type": "contradiction",

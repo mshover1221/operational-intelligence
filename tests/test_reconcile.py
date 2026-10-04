@@ -20,7 +20,7 @@ def test_reconcile_collects_all_findings():
         source_id="email-123",
         recorded_at="2026-09-28 10:33",
         author="customer",
-        content="Can we move the appointment to Wednesday?",
+        content="The appointment has been moved to Wednesday.",
     )
 
     technician_evidence = Evidence(
@@ -174,3 +174,44 @@ def test_reconcile_returns_none_when_claims_match_recorded_state():
     )
 
     assert divergence is None
+
+
+def test_reconcile_treats_request_as_unresolved_request():
+    entity = Entity("work_order", "9821")
+
+    recorded_state = RecordedState({
+        "date": "Monday",
+    })
+
+    evidence = Evidence(
+        source="customer_email",
+        source_id="email-123",
+        recorded_at="2026-10-04 10:33",
+        author="customer",
+        content="Can we move the appointment to Wednesday?",
+    )
+
+    claims = [
+        Claim(
+            entity=entity,
+            attribute="date",
+            value="Wednesday",
+            evidence=evidence,
+            claim_type="request",
+        ),
+    ]
+
+    divergence = reconcile(
+        entity=entity,
+        recorded_state=recorded_state,
+        claims=claims,
+    )
+
+    assert divergence.findings == [
+        {
+            "type": "unresolved_request",
+            "key": "date",
+            "recorded_value": "Monday",
+            "requested_value": "Wednesday",
+        },
+    ]
