@@ -1,0 +1,208 @@
+[
+    {
+      "entity": {
+        "entity_type": "work_order",
+        "entity_id": "9821"
+      },
+      "allowed_attributes": ["date"],
+      "evidence": {
+        "source": "customer_email",
+        "source_id": "email-123",
+        "recorded_at": "2026-10-04 10:33",
+        "author": "customer",
+        "content": "The appointment is Wednesday."
+      },
+      "expected_claims": [
+        {
+          "attribute": "date",
+          "value": "Wednesday",
+          "claim_type": "assertion"
+        }
+      ],
+      "expected_status": "claims_extracted"
+    },
+    {
+        "entity": {
+          "entity_type": "work_order",
+          "entity_id": "9821"
+        },
+        "allowed_attributes": ["date"],
+        "evidence": {
+          "source": "customer_email",
+          "source_id": "email-124",
+          "recorded_at": "2026-10-04 10:40",
+          "author": "customer",
+          "content": "Can we move the appointment to Wednesday?"
+        },
+        "expected_claims": [
+          {
+            "attribute": "date",
+            "value": "Wednesday",
+            "claim_type": "request"
+          }
+        ],
+        "expected_status": "claims_extracted"
+      },
+      {
+        "entity": {
+          "entity_type": "work_order",
+          "entity_id": "9821"
+        },
+        "allowed_attributes": ["date"],
+        "evidence": {
+          "source": "customer_email",
+          "source_id": "email-125",
+          "recorded_at": "2026-10-04 10:45",
+          "author": "customer",
+          "content": "Wednesday might be better."
+        },
+        "expected_claims": [],
+        "expected_status": "insufficient_support"
+      },
+      {
+        "entity": {
+          "entity_type": "work_order",
+          "entity_id": "9821"
+        },
+        "allowed_attributes": ["date", "technician"],
+        "evidence": {
+          "source": "employee_email",
+          "source_id": "email-126",
+          "recorded_at": "2026-10-04 10:50",
+          "author": "dispatcher",
+          "content": "The appointment is Wednesday and technician Alex is assigned."
+        },
+        "expected_claims": [
+          {
+            "attribute": "date",
+            "value": "Wednesday",
+            "claim_type": "assertion"
+          },
+          {
+            "attribute": "technician",
+            "value": "Alex",
+            "claim_type": "assertion"
+          }
+        ],
+        "expected_status": "claims_extracted"
+      },
+      {
+        "entity": {
+          "entity_type": "work_order",
+          "entity_id": "9821"
+        },
+        "allowed_attributes": ["date"],
+        "evidence": {
+          "source": "employee_email",
+          "source_id": "email-127",
+          "recorded_at": "2026-10-04 10:55",
+          "author": "dispatcher",
+          "content": "Technician Alex is assigned."
+        },
+        "expected_claims": [],
+        "expected_status": "insufficient_support"
+      },
+      {
+        "entity": {
+          "entity_type": "invoice",
+          "entity_id": "INV-2048"
+        },
+        "allowed_attributes": ["status"],
+        "evidence": {
+          "source": "accounting_email",
+          "source_id": "email-128",
+          "recorded_at": "2026-10-04 11:00",
+          "author": "accounts_receivable",
+          "content": "Payment was received this morning. Invoice INV-2048 is now paid."
+        },
+        "expected_claims": [
+          {
+            "attribute": "status",
+            "value": "paid",
+            "claim_type": "assertion"
+          }
+        ],
+        "expected_status": "claims_extracted"
+      },
+      {
+        "entity": {
+          "entity_type": "invoice",
+          "entity_id": "INV-2048"
+        },
+        "allowed_attributes": ["status"],
+        "evidence": {
+          "source": "customer_email",
+          "source_id": "email-129",
+          "recorded_at": "2026-10-04 11:05",
+          "author": "customer",
+          "content": "Please mark invoice INV-2048 as disputed."
+        },
+        "expected_claims": [
+          {
+            "attribute": "status",
+            "value": "disputed",
+            "claim_type": "request"
+          }
+        ],
+        "expected_status": "claims_extracted"
+      },
+      {
+        "entity": {
+          "entity_type": "shipment",
+          "entity_id": "SHIP-441"
+        },
+        "allowed_attributes": ["status", "delivery_date"],
+        "evidence": {
+          "source": "carrier_email",
+          "source_id": "email-130",
+          "recorded_at": "2026-10-04 11:10",
+          "author": "carrier",
+          "content": "The shipment is delayed and the new delivery date is Friday."
+        },
+        "expected_claims": [
+          {
+            "attribute": "status",
+            "value": "delayed",
+            "claim_type": "assertion"
+          },
+          {
+            "attribute": "delivery_date",
+            "value": "Friday",
+            "claim_type": "assertion"
+          }
+        ],
+        "expected_status": "claims_extracted"
+      },
+      {
+        "entity": {
+          "entity_type": "shipment",
+          "entity_id": "SHIP-441"
+        },
+        "allowed_attributes": ["status"],
+        "evidence": {
+          "source": "customer_email",
+          "source_id": "email-131",
+          "recorded_at": "2026-10-04 11:15",
+          "author": "customer",
+          "content": "Thanks for your help with this shipment."
+        },
+        "expected_claims": [],
+        "expected_status": "insufficient_support"
+      },
+      {
+        "entity": {
+          "entity_type": "shipment",
+          "entity_id": "SHIP-441"
+        },
+        "allowed_attributes": ["status", "delivery_date"],
+        "evidence": {
+          "source": "carrier_email",
+          "source_id": "email-132",
+          "recorded_at": "2026-10-04 11:20",
+          "author": "carrier",
+          "content": "It looks like the shipment may be delayed until Friday."
+        },
+        "expected_claims": [],
+        "expected_status": "insufficient_support"
+      }
+  ]
