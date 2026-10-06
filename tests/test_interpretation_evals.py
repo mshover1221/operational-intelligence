@@ -5,10 +5,12 @@ from src.evaluation.interpretation_eval import (
     compare_claims,
     build_entity,
     build_evidence,
+    evaluate_case,
 )
 from src.reconciliation.claim import Claim
 from src.reconciliation.entity import Entity
 from src.reconciliation.evidence import Evidence
+from src.interpretation.interpretation_result import InterpretationResult
 
 
 def test_interpretation_eval_cases_have_required_structure():
@@ -130,3 +132,152 @@ def test_build_evidence_from_eval_data():
     assert evidence.author == "customer"
     assert evidence.content == "The appointment is Wednesday."
     assert evidence.event_at is None
+
+
+def test_evaluate_case_compares_interpreter_result():
+    case = {
+        "entity": {
+            "entity_type": "work_order",
+            "entity_id": "9821",
+        },
+        "allowed_attributes": ["date"],
+        "evidence": {
+            "source": "customer_email",
+            "source_id": "email-123",
+            "recorded_at": "2026-10-04 10:33",
+            "author": "customer",
+            "content": "The appointment is Wednesday.",
+        },
+        "expected_claims": [
+            {
+                "attribute": "date",
+                "value": "Wednesday",
+                "claim_type": "assertion",
+            }
+        ],
+        "expected_status": "claims_extracted",
+    }
+
+    def fake_interpreter(entity, evidence, attributes):
+        claim = Claim(
+            entity=entity,
+            attribute="date",
+            value="Wednesday",
+            evidence=evidence,
+            claim_type="assertion",
+        )
+
+        return InterpretationResult(
+            evidence=evidence,
+            claims=[claim],
+        )
+
+    result = evaluate_case(case, fake_interpreter)
+
+    assert result["correct"] == {
+        ("date", "Wednesday", "assertion"),
+    }
+    assert result["missed"] == set()
+    assert result["extra"] == set()
+    assert result["expected_status"] == "claims_extracted"
+    assert result["actual_status"] == "claims_extracted"
+    assert result["status_correct"] is True
+
+
+def test_evaluate_case_reports_exact_match():
+    case = {
+        "entity": {
+            "entity_type": "work_order",
+            "entity_id": "9821",
+        },
+        "allowed_attributes": ["date"],
+        "evidence": {
+            "source": "customer_email",
+            "source_id": "email-123",
+            "recorded_at": "2026-10-04 10:33",
+            "author": "customer",
+            "content": "The appointment is Wednesday.",
+        },
+        "expected_claims": [
+            {
+                "attribute": "date",
+                "value": "Wednesday",
+                "claim_type": "assertion",
+            }
+        ],
+        "expected_status": "claims_extracted",
+    }
+
+    def fake_interpreter(entity, evidence, attributes):
+        claim = Claim(
+            entity=entity,
+            attribute="date",
+            value="Wednesday",
+            evidence=evidence,
+            claim_type="assertion",
+        )
+
+        return InterpretationResult(
+            evidence=evidence,
+            claims=[claim],
+        )
+
+    result = evaluate_case(case, fake_interpreter)
+
+    assert result["exact_match"] is True
+
+
+def test_evaluate_case_is_not_exact_match_when_claim_is_missed():
+    case = {
+        "entity": {
+            "entity_type": "work_order",
+            "entity_id": "9821",
+        },
+        "allowed_attributes": ["date", "technician"],
+        "evidence": {
+            "source": "employee_email",
+            "source_id": "email-126",
+            "recorded_at": "2026-10-04 10:50",
+            "author": "dispatcher",
+            "content": "The appointment is Wednesday and technician Alex is assigned.",
+        },
+        "expected_claims": [
+            {
+                "attribute": "date",
+                "value": "Wednesday",
+                "claim_type": "assertion",
+            },
+            {
+                "attribute": "technician",
+                "value": "Alex",
+                "claim_type": "assertion",
+            },
+        ],
+        "expected_status": "claims_extracted",
+    }
+
+    def fake_interpreter(entity, evidence, attributes):
+        claim = Claim(
+            entity=entity,
+            attribute="date",
+            value="Wednesday",
+            evidence=evidence,
+            claim_type="assertion",
+        )
+
+        return InterpretationResult(
+            evidence=evidence,
+            claims=[claim],
+        )
+
+    result = evaluate_case(case, fake_interpreter)
+
+    assert result["correct"] == {
+        ("date", "Wednesday", "assertion"),
+    }
+    assert result["missed"] == {
+        ("technician", "Alex", "assertion"),
+    }
+    assert result["extra"] == set()
+    assert result["status_correct"] is True
+    assert result["exact_match"] is False

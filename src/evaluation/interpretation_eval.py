@@ -56,3 +56,38 @@ def build_evidence(evidence_data):
         content=evidence_data["content"],
         event_at=evidence_data.get("event_at"),
     )
+
+
+def evaluate_case(case, interpreter):
+    entity = build_entity(case["entity"])
+    evidence = build_evidence(case["evidence"])
+
+    result = interpreter(
+        entity=entity,
+        evidence=evidence,
+        attributes=case["allowed_attributes"],
+    )
+
+    actual_claims = [
+        normalize_claim(claim)
+        for claim in result.claims
+    ]
+
+    comparison = compare_claims(
+        case["expected_claims"],
+        actual_claims,
+    )
+
+    comparison["expected_status"] = case["expected_status"]
+    comparison["actual_status"] = result.status
+    comparison["status_correct"] = (
+        case["expected_status"] == result.status
+    )
+
+    comparison["exact_match"] = (
+        not comparison["missed"]
+        and not comparison["extra"]
+        and comparison["status_correct"]
+    )
+
+    return comparison
