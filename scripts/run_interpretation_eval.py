@@ -1,18 +1,25 @@
+import argparse
 import json
 
 from src.evaluation.interpretation_eval import evaluate_case
 from src.interpretation.interpret import interpret
 
 
-def load_cases():
-    with open("evals/interpretation_cases.json") as f:
-        cases = json.load(f)
-
-    return cases
+def load_cases(path):
+    with open(path) as f:
+        return json.load(f)
 
 
 if __name__ == "__main__":
-    cases = load_cases()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--cases",
+        default="evals/interpretation_cases.json",
+        help="Path to the evaluation dataset",
+    )
+    args = parser.parse_args()
+
+    cases = load_cases(args.cases)
     print(f"Loaded {len(cases)} evaluation cases")
 
     exact_matches = 0

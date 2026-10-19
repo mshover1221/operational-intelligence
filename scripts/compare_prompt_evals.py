@@ -57,6 +57,8 @@ def write_results(path, record):
 
 def main():
     parser = argparse.ArgumentParser(description="Compare original and modified prompts")
+    parser.add_argument(
+                        "--dataset", default="evals/interpretation_cases.json", help="Path to the evaluation dataset",)
     parser.add_argument("--cases", type=int, default=2,
                         help="Number of evaluation cases to run (default: 2)")
     parser.add_argument("--repeats", type=int, default=1,
@@ -65,7 +67,7 @@ def main():
                         help="Append-only JSONL output path")
     args = parser.parse_args()
 
-    cases = load_cases()
+    cases = load_cases(args.dataset)
     if not 1 <= args.cases <= len(cases):
         parser.error(f"--cases must be between 1 and {len(cases)}")
     if args.repeats < 1:

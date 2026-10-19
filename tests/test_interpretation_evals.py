@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+
+import pytest
 from src.evaluation.interpretation_eval import (
     normalize_claim,
     compare_claims,
@@ -13,12 +15,20 @@ from src.reconciliation.evidence import Evidence
 from src.interpretation.interpretation_result import InterpretationResult
 
 
-def test_interpretation_eval_cases_have_required_structure():
-    eval_path = Path("evals/interpretation_cases.json")
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "interpretation_cases.json",
+        "interpretation_development_cases.json",
+    ],
+)
+def test_interpretation_eval_cases_have_required_structure(filename):
+    eval_path = Path("evals") / filename
 
     with eval_path.open() as file:
         cases = json.load(file)
 
+    assert isinstance(cases, list)
     assert len(cases) > 0
 
     required_fields = {
@@ -31,6 +41,22 @@ def test_interpretation_eval_cases_have_required_structure():
 
     for case in cases:
         assert required_fields.issubset(case.keys())
+
+        assert isinstance(case["allowed_attributes"], list)
+        assert isinstance(case["expected_claims"], list)
+
+        expected_status = (
+            "claims_extracted"
+            if case["expected_claims"]
+            else "insufficient_support"
+        )
+
+        assert case["expected_status"] == expected_status
+
+        for claim in case["expected_claims"]:
+            assert claim["attribute"] in case["allowed_attributes"]
+            assert claim["claim_type"] in {"assertion", "request"}
+            assert isinstance(claim["value"], str)
 
 
 def test_normalize_claim_keeps_evaluation_fields():
