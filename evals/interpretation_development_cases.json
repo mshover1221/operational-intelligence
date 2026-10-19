@@ -1,0 +1,56 @@
+[
+    {
+      "entity": {
+        "entity_type": "work_order",
+        "entity_id": "9821"
+      },
+      "allowed_attributes": ["date"],
+      "evidence": {
+        "source": "customer_email",
+        "source_id": "dev-email-001",
+        "recorded_at": "2026-10-19 10:00",
+        "author": "customer",
+        "content": "Sarah confirmed the appointment is Thursday."
+      },
+      "expected_claims": [
+        {
+          "attribute": "date",
+          "value": "Thursday",
+          "claim_type": "assertion"
+        }
+      ],
+      "expected_status": "claims_extracted"
+    },
+    {
+        "entity": {
+          "entity_type": "work_order",
+          "entity_id": "9821"
+        },
+        "allowed_attributes": ["date"],
+        "evidence": {
+          "source": "customer_email",
+          "source_id": "dev-email-002",
+          "recorded_at": "2026-10-19 10:05",
+          "author": "customer",
+          "content": "I think Sarah confirmed Thursday, but I'm not sure."
+        },
+        "expected_claims": [],
+        "expected_status": "insufficient_support"
+      },
+      {
+        "entity": {
+          "entity_type": "work_order",
+          "entity_id": "9821"
+        },
+        "allowed_attributes": ["date"],
+        "evidence": {
+          "source": "customer_email",
+          "source_id": "dev-email-003",
+          "recorded_at": "2026-10-19 10:10",
+          "author": "customer",
+          "content": "Sarah said she'd check whether Thursday works."
+        },
+        "expected_claims": [],
+        "expected_status": "insufficient_support"
+      }
+  ]
